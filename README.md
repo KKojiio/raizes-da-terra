@@ -24,7 +24,7 @@ Na primeira execução o script:
 2. sobe o MySQL no Docker (porta `127.0.0.1:3308`, banco `raizes_console`);
 3. cria as tabelas a partir de [`database/schema.sql`](database/schema.sql), compila e abre o menu no terminal.
 
-Os dados ficam salvos no volume do Docker entre execuções. Para pausar o banco: `docker compose stop`.
+Os dados ficam salvos no volume do Docker entre execuções. Se já houver outra cópia deste projeto usando o mesmo banco no computador, reutilize o arquivo `.env` da cópia que criou o volume; gerar senhas diferentes para o mesmo volume causa falha de autenticação. Não publique esse arquivo. Para pausar o banco: `docker compose stop`.
 
 ### Linux / macOS (ou MySQL próprio)
 
@@ -49,7 +49,7 @@ Para usar um MySQL já instalado, defina `DB_URL` (ex.: `jdbc:mysql://127.0.0.1:
 powershell -ExecutionPolicy Bypass -File .\testar.ps1
 ```
 
-São 16 testes de integração contra o **MySQL real** (sem banco em memória); cada teste roda numa transação desfeita ao final.
+São 39 casos de teste: 18 de integração contra o **MySQL real**, com transações desfeitas ao final, e 21 de validação de dias e horários. Não há banco em memória.
 
 ## Usando o sistema
 
@@ -69,6 +69,8 @@ Administração (cadastrar, listar, editar e excluir):
 | Produtores | CRUD completo | RF01, RF02 |
 | Produtos | CRUD completo; todo produto pertence a um produtor | RF03, RF04, RF08 |
 | Feiras e participação | CRUD de feiras, associar/remover produtor e listar participantes | RF05, RF06, RF07, RF09 |
+
+Dias aceitam nomes como `sábado`, listas como `terça e quinta` e intervalos como `segunda a sexta`. O horário exige início e fim no mesmo dia, como `08:00 às 12:00` ou `8h às 12h`. Valores inválidos são rejeitados antes de gravar.
 
 Ordem sugerida: cadastre um produtor → um produto dele → uma feira → associe o produtor à feira. Os IDs aparecem ao cadastrar e listar. Exclusões pedem a palavra `EXCLUIR` para confirmar.
 

@@ -222,4 +222,21 @@ class ConsoleIntegrationTest {
                                                         .executar()))
                 .isInstanceOf(br.edu.raizes.console.Entrada.FimDaEntrada.class);
     }
+
+    @Test
+    void diaInvalidoNaoGravaFeira() {
+        int antes = jdbc.queryForObject("SELECT COUNT(*) FROM feira", Integer.class);
+        assertThatThrownBy(() -> s.salvarFeira(0, "Inválida", "Rua 1", "45", "08:00 às 12:00"))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM feira", Integer.class))
+                .isEqualTo(antes);
+    }
+
+    @Test
+    void horarioInvalidoNaoAlteraFeiraExistente() {
+        long id = feira();
+        assertThatThrownBy(() -> s.salvarFeira(id, "Alterada", "Rua 2", "Domingo", "4:50"))
+                .isInstanceOf(IllegalArgumentException.class);
+        assertThat(s.feira(id).getNome()).isEqualTo("Feira de teste");
+    }
 }

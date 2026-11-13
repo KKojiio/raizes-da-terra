@@ -94,8 +94,8 @@ public class CatalogoService {
                 id,
                 validarTexto(nome, "nome", 120),
                 validarTexto(endereco, "endereço", 200),
-                validarTexto(dias, "dias", 120),
-                validarTexto(horario, "horário", 120));
+                FuncionamentoFeira.normalizarDias(validarTexto(dias, "dias", 120)),
+                FuncionamentoFeira.normalizarHorario(validarTexto(horario, "horário", 120)));
     }
 
     @Transactional

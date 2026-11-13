@@ -42,8 +42,8 @@ public final class MenuFeiras {
                         0,
                         entrada.texto("Nome"),
                         entrada.texto("Endereço"),
-                        entrada.texto("Dias"),
-                        entrada.texto("Horário"));
+                        entrada.texto("Dias (ex.: sábado ou terça e quinta)"),
+                        entrada.texto("Horário (ex.: 08:00 às 12:00)"));
         entrada.mostrar("Feira cadastrada. ID: " + id);
     }
 
