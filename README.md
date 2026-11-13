@@ -4,7 +4,7 @@ Catálogo de produtores, produtos e feiras da Região Metropolitana de Maringá.
 
 ## Situação da integração
 
-A branch `codex/ezequiel-console` é destinada **somente à parte de Ezequiel e à infraestrutura compartilhada**. Ela depende dos arquivos de Junia e Karoliny para compilar e executar como projeto integrado. Não é a versão final da main. Os ZIPs individuais distribuídos à equipe incluem todos os módulos e permitem executar a base completa localmente; cada pessoa deve revisar e enviar apenas seu conjunto de arquivos e suas alterações reais.
+A branch `ezequiel-console` é destinada **somente à parte de Ezequiel e à infraestrutura compartilhada**. Ela depende dos arquivos de Junia e Karoliny para compilar e executar como projeto integrado. Não é a versão final da main. Os ZIPs individuais distribuídos à equipe incluem todos os módulos e permitem executar a base completa localmente; cada pessoa deve revisar e enviar apenas seu conjunto de arquivos e suas alterações reais.
 
 ## Abrir no VS Code
 
@@ -54,7 +54,7 @@ Execute `powershell -ExecutionPolicy Bypass -File .\testar.ps1`. A suíte usa My
 | Junia | Produtos, menu e schema.sql | [Arquivos e tarefas](docs/partes/Junia.md) |
 | Karoliny | Feiras, participação, Main e MenuPrincipal | [Arquivos e tarefas](docs/partes/Karoliny.md) |
 
-Todos os pacotes incluem a base completa para execução. Eles não são três aplicações diferentes. Antes de editar, confira seu guia e combine mudanças em arquivos compartilhados. Ainda não há contribuições reais atribuídas aos colegas. O acesso da conta Ezequielmarques261 foi confirmado em 13/11/2026 após o convite de colaborador. A publicação da parte de Ezequiel usa a branch codex/ezequiel-console; a integração dos módulos dos colegas continua pendente.
+Todos os pacotes incluem a base completa para execução. Eles não são três aplicações diferentes. Antes de editar, confira seu guia e combine mudanças em arquivos compartilhados. Ainda não há contribuições reais atribuídas aos colegas. O acesso da conta Ezequielmarques261 foi confirmado em 13/11/2026 após o convite de colaborador. A publicação da parte de Ezequiel usa a branch ezequiel-console; a integração dos módulos dos colegas continua pendente.
 
 ## Arquitetura e POO
 

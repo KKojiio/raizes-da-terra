@@ -30,7 +30,7 @@
 
 Este pacote foi preparado com assistência e contém a base completa para todos conseguirem executar. A indicação de responsabilidade não comprova que você já fez ou compreendeu o trabalho. Execute, revise, faça melhorias/correções reais e descreva seu trabalho no commit. Não crie commits vazios ou em nome de outra pessoa.
 
-O acesso da conta Ezequielmarques261 já foi confirmado. Sua parte usa a branch codex/ezequiel-console. Junia e Karoliny também precisam de acesso para enviar seus próprios arquivos. A main só estará completa depois da integração dos três conjuntos.
+O acesso da conta Ezequielmarques261 já foi confirmado. Sua parte usa a branch ezequiel-console. Junia e Karoliny também precisam de acesso para enviar seus próprios arquivos. A main só estará completa depois da integração dos três conjuntos.
 
 No GitHub, é necessário coordenar a primeira integração dos três conjuntos de arquivos. Todos os ZIPs têm a mesma base: não subir três projetos duplicados nem substituir alterações recentes dos colegas. Crie uma branch própria a partir da versão atual do repositório, copie/revise somente sua parte e faça o commit dela. Até os três módulos estarem integrados, um conjunto isolado pode não compilar; teste a base completa fornecida.
 
@@ -41,3 +41,9 @@ Confira git status e git diff. Adicione apenas os caminhos da lista “Seus arqu
 ## Registro de revisão real
 
 Crie `docs/revisoes/Junia.md` quando executar. Informe data, o que testou, resultado e dúvidas. Esse arquivo não foi preenchido por você ainda e não deve conter resultados inventados.
+
+## Base publicada para continuar
+
+Parte de Ezequiel: commit adde501, branch ezequiel-console, confirmada no remoto em 13/11/2026. A main não foi alterada.
+
+Clone a branch ezequiel-console em uma pasta separada, copie a base completa do seu ZIP preservando .git e crie sua branch de trabalho (Junia: junia/produtos-banco; Karoliny: karoliny/feiras-participacao). Compare atualizações remotas antes de substituir arquivos. Adicione somente seus arquivos. O PDF incluído no pacote explica os comandos.
