@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "Raízes da Terra - console",
+      "request": "launch",
+      "mainClass": "br.edu.raizes.Main",
+      "console": "integratedTerminal",
+      "envFile": "${workspaceFolder}/.env",
+      "preLaunchTask": "Preparar classes (Maven)"
+    }
+  ]
+}
