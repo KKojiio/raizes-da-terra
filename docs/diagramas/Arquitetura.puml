@@ -1,0 +1,36 @@
+@startuml
+actor Consumidor
+actor Administrador
+class Main
+class MenuPrincipal
+class MenuProdutores
+class MenuProdutos
+class MenuFeiras
+class LoginService
+class CatalogoService
+interface CatalogoRepository
+class JdbcCatalogoRepository
+class ProdutorRepository
+class ProdutoRepository
+class FeiraRepository
+database MySQL
+Main --> MenuPrincipal
+Consumidor --> MenuPrincipal : consultas
+Administrador --> MenuPrincipal : login
+MenuPrincipal --> LoginService
+MenuPrincipal --> MenuProdutores
+MenuPrincipal --> MenuProdutos
+MenuPrincipal --> MenuFeiras
+MenuPrincipal --> CatalogoService
+MenuProdutores --> CatalogoService
+MenuProdutos --> CatalogoService
+MenuFeiras --> CatalogoService
+CatalogoService --> CatalogoRepository
+CatalogoRepository <|.. JdbcCatalogoRepository
+JdbcCatalogoRepository --> ProdutorRepository
+JdbcCatalogoRepository --> ProdutoRepository
+JdbcCatalogoRepository --> FeiraRepository
+ProdutorRepository --> MySQL
+ProdutoRepository --> MySQL
+FeiraRepository --> MySQL
+@enduml
