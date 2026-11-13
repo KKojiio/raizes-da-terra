@@ -91,7 +91,7 @@ Ordem sugerida: cadastre um produtor → um produto dele → uma feira → assoc
 └── *.ps1                      scripts de configuração, execução e testes
 ```
 
-**Arquitetura em camadas:** `Menu* (controle) → CatalogoService (regras) → CatalogoRepository (interface) → ProdutorRepository / ProdutoRepository / FeiraRepository → MySQL`. Diagramas em [`docs/diagramas`](docs/diagramas).
+**Arquitetura em camadas:** `Menu* (controle) → CatalogoService (regras) → CatalogoRepository (interface) → ProdutorRepository / ProdutoRepository / FeiraRepository → MySQL`. Os diagramas do modelo implementado estão em [`docs/diagramas`](docs/diagramas); os diagramas planejados estão no [documento da 1ª entrega](docs/AEP_1a_entrega.pdf). As diferenças entre os dois estão explicadas em [Evolução do modelo](#evolução-do-modelo-1ª--2ª-entrega).
 
 ## Pilares de POO
 
@@ -103,6 +103,21 @@ Ordem sugerida: cadastre um produtor → um produto dele → uma feira → assoc
 | Polimorfismo (`@Override`) | `Produtor` e `Feira` sobrescrevem `getResumo()`; o catálogo percorre uma `List<ItemCatalogo>` e chama `getResumo()` em cada item |
 | Composição 1:N | Um `Produtor` possui uma lista de `Produto`; no banco, `produto.produtor_id` com `ON DELETE CASCADE` |
 | Encapsulamento | Atributos `private final`, lista de produtos imutável |
+
+## Evolução do modelo (1ª → 2ª entrega)
+
+O escopo planejado na 1ª entrega foi mantido por inteiro: **os requisitos RF01–RF10 e as regras RN01–RN08 estão implementados**, com Java, MySQL e arquitetura em camadas, como previsto. Durante a implementação, o modelo de classes e o DER foram simplificados para o tamanho do MVP. As mudanças e seus motivos:
+
+| Planejado (1ª entrega) | Implementado (2ª entrega) | Motivo |
+|---|---|---|
+| Classe abstrata `Pessoa`, especializada em `Administrador` e `Produtor`, com polimorfismo em `obterTipoPerfil()` | Classe abstrata `ItemCatalogo`, especializada em `Produtor` e `Feira`, com polimorfismo em `getResumo()` | Nenhum requisito pede cadastro de usuários: o administrador é um operador único, não uma entidade do catálogo. Já produtores e feiras são justamente o que o consumidor consulta, e o catálogo os trata juntos numa `List<ItemCatalogo>`, chamando `getResumo()` em cada um. Assim o polimorfismo é usado de fato na consulta, e não só declarado. O próprio documento da 1ª entrega apresentou `Pessoa` como "uma possibilidade". |
+| Tabelas `usuario` e `administrador` | Login do administrador por configuração (`ADMIN_PASSWORD` no `.env`) | Mesmo motivo: não há requisito de gestão de usuários. O sistema evita guardar senhas no banco sem necessidade. |
+| Tabelas `categoria`, `contato_produtor` e `horario_feira` | Campos `categoria` (produto), `telefone` (produtor), `dias` e `horario` (feira) | O RF03 pede a categoria, o RF01/RF10 pedem o telefone como contato e o RF05 pede dias e horários. Os campos atendem a esses requisitos com menos tabelas; dias e horários são validados antes de gravar (`FuncionamentoFeira`). |
+| Endereço detalhado e coordenadas da feira, preço de referência, unidade e disponibilidade do produto, banca e data de entrada na feira | Não implementados | Não constam nos requisitos. Pela RN06, a plataforma não realiza vendas, então preço e disponibilidade ficam para uma versão futura. |
+| Composição `Produtor` 1 → N `Produto` ("possui") | **Mantida** | `Produtor` contém a lista de `Produto`; no banco, `produto.produtor_id` com `ON DELETE CASCADE`. |
+| Relação N:N produtor–feira (`produtor_feira`) | **Mantida** | Tabela de associação com chave composta, que impede participação duplicada (RN01, RN02). |
+
+Os pilares exigidos (classe abstrata/interface, herança, polimorfismo com `@Override` e composição 1:N) continuam presentes; ver [Pilares de POO](#pilares-de-poo).
 
 ## Requisitos
 
@@ -136,18 +151,16 @@ Ordem sugerida: cadastre um produtor → um produto dele → uma feira → assoc
 
 ### 1ª entrega (planejamento)
 
-| Data | Atividade | Responsável |
-|------|-----------|-------------|
-| 15/08/2026 | Levantamento e validação do problema | Todos |
-| 18/08/2026 | Definição dos ODS e proposta de valor | Todos |
-| 22/08/2026 | Definição e revisão dos requisitos | Todos |
-| 25/08/2026 | Definição das regras de negócio | Karoliny |
-| 29/08/2026 | Modelagem das entidades e DER | Junia |
-| 03/09/2026 | Diagrama de classes | Ezequiel |
-| 04/09/2026 | Definição da arquitetura e tecnologias | Todos |
-| 04/09/2026 | Criação e organização do GitHub | Karoliny |
-| 08/09/2026 | Revisão de consistência entre requisitos e diagramas | Todos |
-| 10/09/2026 | Formatação e revisão final da 1ª entrega | Todos |
+Igual ao documento entregue ([`docs/AEP_1a_entrega.pdf`](docs/AEP_1a_entrega.pdf), seção 3):
+
+| Sprint / Data | Épico | User Story | Responsável |
+|---|---|---|---|
+| Sprint 1 — 15/08–22/08 | Descoberta e requisitos | **COMO UM** integrante da equipe **EU QUERO** validar o problema, os ODS e os requisitos **PARA QUE** o escopo seja claro. | Todos |
+| Sprint 2 — 23/08–29/08 | Modelagem | **COMO UM** desenvolvedor **EU QUERO** definir as regras, entidades e relacionamentos **PARA QUE** o banco seja consistente. | Integrantes 1 e 2 |
+| Sprint 3 — 30/08–05/09 | Arquitetura e POO | **COMO UM** desenvolvedor **EU QUERO** modelar classes com herança e polimorfismo **PARA QUE** a solução atenda às exigências de POO. | Integrante 3 |
+| Sprint 4 — 06/09–10/09 | Documentação e GitHub | **COMO UMA** equipe **EU QUERO** finalizar diagramas, README e repositório **PARA QUE** a entrega seja reproduzível e avaliável. | Todos |
+
+Integrante 1: Karoliny · Integrante 2: Junia · Integrante 3: Ezequiel.
 
 ### 2ª entrega (implementação)
 
