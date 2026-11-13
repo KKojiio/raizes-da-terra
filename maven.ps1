@@ -1,4 +1,3 @@
-# Inicializador do Maven; não é o Maven Wrapper oficial.
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 if (-not $env:JAVA_HOME) {

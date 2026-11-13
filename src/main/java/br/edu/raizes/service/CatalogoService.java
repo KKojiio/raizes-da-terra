@@ -2,48 +2,139 @@ package br.edu.raizes.service;
 
 import br.edu.raizes.domain.*;
 import br.edu.raizes.repository.CatalogoRepository;
-import java.util.*;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.*;
+
 @Service
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class CatalogoService {
-    private final CatalogoRepository repo;
-    public CatalogoService(CatalogoRepository repo) { this.repo = repo; }
-    private String texto(String value,String campo,int max) {
-        if(value == null || value.isBlank()) throw new IllegalArgumentException("Preencha " + campo + ".");
-        String result = value.strip();
-        if(result.length() > max) throw new IllegalArgumentException(campo + ": limite de " + max + " caracteres.");
-        return result;
+    private final CatalogoRepository repositorio;
+
+    public CatalogoService(CatalogoRepository repositorio) {
+        this.repositorio = repositorio;
     }
-    private void id(long id) { if(id < 0) throw new IllegalArgumentException("Identificador inválido."); }
-    public List<Produtor> produtores() { return repo.produtores(); }
-    public List<Feira> feiras() { return repo.feiras(); }
-    public List<Produto> produtos() { return repo.produtos(); }
-    public Produtor produtor(long id) { return repo.produtor(id); }
-    public Feira feira(long id) { return repo.feira(id); }
-    public Produto produto(long id) { return repo.produto(id); }
-    public List<Produtor> produtoresDaFeira(long id) { repo.feira(id); return repo.produtoresDaFeira(id); }
-    public List<Feira> feirasDoProdutor(long id) { repo.produtor(id); return repo.feirasDoProdutor(id); }
-    public List<Map<String,Object>> participacoes() { return repo.participacoes(); }
+
+    private String validarTexto(String valor, String campo, int limite) {
+        if (valor == null || valor.isBlank())
+            throw new IllegalArgumentException("Preencha " + campo + ".");
+        String textoValidado = valor.strip();
+        if (textoValidado.length() > limite)
+            throw new IllegalArgumentException(campo + ": limite de " + limite + " caracteres.");
+        return textoValidado;
+    }
+
+    private void validarIdentificador(long id) {
+        if (id < 0) throw new IllegalArgumentException("Identificador inválido.");
+    }
+
+    public List<Produtor> produtores() {
+        return repositorio.produtores();
+    }
+
+    public List<Feira> feiras() {
+        return repositorio.feiras();
+    }
+
+    public List<Produto> produtos() {
+        return repositorio.produtos();
+    }
+
+    public Produtor produtor(long id) {
+        return repositorio.produtor(id);
+    }
+
+    public Feira feira(long id) {
+        return repositorio.feira(id);
+    }
+
+    public Produto produto(long id) {
+        return repositorio.produto(id);
+    }
+
+    public List<Produtor> produtoresDaFeira(long id) {
+        repositorio.feira(id);
+        return repositorio.produtoresDaFeira(id);
+    }
+
+    public List<Feira> feirasDoProdutor(long id) {
+        repositorio.produtor(id);
+        return repositorio.feirasDoProdutor(id);
+    }
+
+    public List<Map<String, Object>> participacoes() {
+        return repositorio.participacoes();
+    }
+
     public List<ItemCatalogo> destaques() {
-        List<ItemCatalogo> itens = new ArrayList<>(); itens.addAll(feiras()); itens.addAll(produtores());
-        return List.copyOf(itens); // A tela chama getResumo/getCaminho sem conhecer o subtipo.
+        List<ItemCatalogo> itens = new ArrayList<>();
+        itens.addAll(feiras());
+        itens.addAll(produtores());
+        return List.copyOf(itens);
     }
-    @Transactional public long salvarProdutor(long id,String nome,String descricao,String telefone,String localizacao) {
-        id(id); return repo.salvarProdutor(id,texto(nome,"nome",120),texto(descricao,"descrição",1000),texto(telefone,"telefone",25),texto(localizacao,"localização",180));
+
+    @Transactional
+    public long salvarProdutor(
+            long id, String nome, String descricao, String telefone, String localizacao) {
+        validarIdentificador(id);
+        return repositorio.salvarProdutor(
+                id,
+                validarTexto(nome, "nome", 120),
+                validarTexto(descricao, "descrição", 1000),
+                validarTexto(telefone, "telefone", 25),
+                validarTexto(localizacao, "localização", 180));
     }
-    @Transactional public long salvarFeira(long id,String nome,String endereco,String dias,String horario) {
-        id(id); return repo.salvarFeira(id,texto(nome,"nome",120),texto(endereco,"endereço",200),texto(dias,"dias",120),texto(horario,"horário",120));
+
+    @Transactional
+    public long salvarFeira(long id, String nome, String endereco, String dias, String horario) {
+        validarIdentificador(id);
+        return repositorio.salvarFeira(
+                id,
+                validarTexto(nome, "nome", 120),
+                validarTexto(endereco, "endereço", 200),
+                validarTexto(dias, "dias", 120),
+                validarTexto(horario, "horário", 120));
     }
-    @Transactional public long salvarProduto(long id,long produtorId,String nome,String descricao,String categoria) {
-        id(id); repo.produtor(produtorId);
-        return repo.salvarProduto(id,produtorId,texto(nome,"nome",120),texto(descricao,"descrição",1000),texto(categoria,"categoria",80));
+
+    @Transactional
+    public long salvarProduto(
+            long id, long produtorId, String nome, String descricao, String categoria) {
+        validarIdentificador(id);
+        repositorio.produtor(produtorId);
+        return repositorio.salvarProduto(
+                id,
+                produtorId,
+                validarTexto(nome, "nome", 120),
+                validarTexto(descricao, "descrição", 1000),
+                validarTexto(categoria, "categoria", 80));
     }
-    @Transactional public void excluirProdutor(long id) { repo.excluirProdutor(id); }
-    @Transactional public void excluirFeira(long id) { repo.excluirFeira(id); }
-    @Transactional public void excluirProduto(long id) { repo.excluirProduto(id); }
-    @Transactional public void associar(long produtorId,long feiraId) { repo.produtor(produtorId); repo.feira(feiraId); repo.associar(produtorId,feiraId); }
-    @Transactional public void desassociar(long produtorId,long feiraId) { repo.desassociar(produtorId,feiraId); }
+
+    @Transactional
+    public void excluirProdutor(long id) {
+        repositorio.excluirProdutor(id);
+    }
+
+    @Transactional
+    public void excluirFeira(long id) {
+        repositorio.excluirFeira(id);
+    }
+
+    @Transactional
+    public void excluirProduto(long id) {
+        repositorio.excluirProduto(id);
+    }
+
+    @Transactional
+    public void associar(long produtorId, long feiraId) {
+        repositorio.produtor(produtorId);
+        repositorio.feira(feiraId);
+        repositorio.associar(produtorId, feiraId);
+    }
+
+    @Transactional
+    public void desassociar(long produtorId, long feiraId) {
+        repositorio.desassociar(produtorId, feiraId);
+    }
 }

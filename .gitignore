@@ -5,3 +5,8 @@
 *.log
 .env
 /executavel/
+
+/docs/
+/README.md
+/LEIA-PRIMEIRO.md
+/MINHA-PARTE.txt

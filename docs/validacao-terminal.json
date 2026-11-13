@@ -1,8 +1,0 @@
-{
-  "processos_cenario": 5,
-  "login": true,
-  "menus_tres_modulos": true,
-  "persistencia_entre_processos": true,
-  "limpeza_dados_ficticios": true,
-  "acentos_utf8": true
-}
