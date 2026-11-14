@@ -50,22 +50,24 @@ public final class MenuProdutos {
             entrada.mostrar(
                     produto.id()
                             + " - "
-                            + produto.nome()
+                            + produto.exibirInformacoes()
                             + " | produtor "
-                            + produto.produtorId()
-                            + " | "
-                            + produto.categoria());
+                            + produto.produtorId());
     }
 
     private void editarProduto() {
 
         var produto = catalogo.produto(entrada.numero("ID do produto"));
-        catalogo.salvarProduto(
-                produto.id(),
-                produto.produtorId(),
+        produto.atualizarDados(
                 entrada.campo("Nome", produto.nome()),
                 entrada.campo("Descrição", produto.descricao()),
                 entrada.campo("Categoria", produto.categoria()));
+        catalogo.salvarProduto(
+                produto.id(),
+                produto.produtorId(),
+                produto.nome(),
+                produto.descricao(),
+                produto.categoria());
         entrada.mostrar("Produto atualizado; proprietário preservado.");
     }
 

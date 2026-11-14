@@ -27,3 +27,17 @@ CREATE TABLE IF NOT EXISTS produtor_feira (
  CONSTRAINT fk_pf_produtor FOREIGN KEY (produtor_id) REFERENCES produtor(id) ON DELETE CASCADE,
  CONSTRAINT fk_pf_feira FOREIGN KEY (feira_id) REFERENCES feira(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS usuario (
+ id BIGINT PRIMARY KEY AUTO_INCREMENT,
+ nome VARCHAR(120) NOT NULL,
+ email VARCHAR(160) NOT NULL,
+ senha_hash VARCHAR(255) NOT NULL,
+ tipo ENUM('ADMINISTRADOR','PRODUTOR') NOT NULL,
+ CONSTRAINT uk_usuario_email UNIQUE (email)
+);
+CREATE TABLE IF NOT EXISTS administrador (
+ id_usuario BIGINT PRIMARY KEY,
+ matricula VARCHAR(20) NOT NULL,
+ CONSTRAINT fk_administrador_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id) ON DELETE CASCADE
+);
