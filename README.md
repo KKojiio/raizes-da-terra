@@ -49,7 +49,7 @@ Para usar um MySQL já instalado, defina `DB_URL` (ex.: `jdbc:mysql://127.0.0.1:
 powershell -ExecutionPolicy Bypass -File .\testar.ps1
 ```
 
-São 42 casos de teste: 18 de integração contra o **MySQL real**, com transações desfeitas ao final, 21 de validação de dias e horários e 3 da classe `Feira`. Não há banco em memória.
+São 50 casos de teste: 18 de integração contra o **MySQL real**, com transações desfeitas ao final, 21 de validação de dias e horários e 11 das classes de domínio e do hash de senha (`Pessoa`, `Produtor`, `Produto`, `Feira` e `Senhas`). Não há banco em memória.
 
 ## Usando o sistema
 
@@ -60,7 +60,7 @@ Menu inicial (consulta pública, sem login):
 | 1 Consultar catálogo | Lista feiras e produtores com um resumo de cada | RF02, RF06 |
 | 2 Detalhar produtor | Contato, localização, produtos e feiras de um produtor | RF04, RF10 |
 | 3 Detalhar feira | Endereço, dias, horário e produtores participantes | RF06, RF09 |
-| 4 Entrar como administrador | Usuário `admin`; senha = `ADMIN_PASSWORD` do arquivo `.env` (3 tentativas) | — |
+| 4 Entrar como administrador | Usuário `admin`; senha = `ADMIN_PASSWORD` do arquivo `.env` (3 tentativas). No primeiro uso essa senha é gravada no banco como hash; trocar o `.env` depois não altera a senha já gravada | — |
 
 Administração (cadastrar, listar, editar e excluir):
 
@@ -97,21 +97,24 @@ Ordem sugerida: cadastre um produtor → um produto dele → uma feira → assoc
 
 | Pilar | Onde |
 |---|---|
-| Classe abstrata | `JdbcBase`, base dos repositórios (inserção e verificação de registros) |
+| Classe abstrata | `Pessoa`, com o método abstrato `obterTipoPerfil()`, como no diagrama de classes; também `JdbcBase`, base dos repositórios |
 | Interface | `ItemCatalogo`, implementada por `Produtor` e `Feira`; `CatalogoRepository`, implementada por `JdbcCatalogoRepository` |
-| Herança | `ProdutorRepository`, `ProdutoRepository` e `FeiraRepository` estendem `JdbcBase` |
-| Polimorfismo (`@Override`) | `Produtor` e `Feira` implementam `getResumo()` cada um do seu jeito; o catálogo percorre uma `List<ItemCatalogo>` e chama `getResumo()` em cada item |
-| Composição 1:N | Um `Produtor` possui uma lista de `Produto`; no banco, `produto.produtor_id` com `ON DELETE CASCADE` |
-| Encapsulamento | Atributos `private final`, lista de produtos imutável |
+| Herança | `Produtor` e `Administrador` estendem `Pessoa`; os repositórios estendem `JdbcBase` |
+| Polimorfismo (`@Override`) | `Produtor` e `Administrador` sobrescrevem `obterTipoPerfil()`; `Produtor` e `Feira` implementam `getResumo()`, e o catálogo percorre uma `List<ItemCatalogo>` chamando `getResumo()` em cada item |
+| Composição 1:N | Um `Produtor` possui seus `Produto` (`adicionarProduto()` e `removerProduto()`); no banco, `produto.produtor_id` com `ON DELETE CASCADE` |
+| Encapsulamento | Atributos privados, lista de produtos somente leitura, senhas gravadas só como hash PBKDF2 |
 
 ## Evolução do modelo (1ª → 2ª entrega)
 
-O escopo planejado na 1ª entrega foi mantido por inteiro: **os requisitos RF01–RF10 e as regras RN01–RN08 estão implementados**, com Java, MySQL e arquitetura em camadas, como previsto. Durante a implementação, o modelo de classes e o DER foram simplificados para o tamanho do MVP. As mudanças e seus motivos:
+O escopo planejado na 1ª entrega foi mantido por inteiro: **os requisitos RF01–RF10 e as regras RN01–RN08 estão implementados**, com Java, MySQL e arquitetura em camadas, como previsto. **O modelo de classes segue o diagrama entregue**; o DER foi simplificado para o tamanho do MVP. O que foi mantido, o que mudou e por quê:
 
 | Planejado (1ª entrega) | Implementado (2ª entrega) | Motivo |
 |---|---|---|
-| Classe abstrata `Pessoa`, especializada em `Administrador` e `Produtor`, com polimorfismo em `obterTipoPerfil()` | Interface `ItemCatalogo`, implementada por `Produtor` e `Feira`, com polimorfismo em `getResumo()` (a classe `Pessoa` do diagrama está sendo incorporada) | Nenhum requisito pede cadastro de usuários: o administrador é um operador único, não uma entidade do catálogo. Já produtores e feiras são justamente o que o consumidor consulta, e o catálogo os trata juntos numa `List<ItemCatalogo>`, chamando `getResumo()` em cada um. Assim o polimorfismo é usado de fato na consulta, e não só declarado. O próprio documento da 1ª entrega apresentou `Pessoa` como "uma possibilidade". |
-| Tabelas `usuario` e `administrador` | Login do administrador por configuração (`ADMIN_PASSWORD` no `.env`) | Mesmo motivo: não há requisito de gestão de usuários. O sistema evita guardar senhas no banco sem necessidade. |
+| Classe abstrata `Pessoa`, especializada em `Administrador` e `Produtor`, com polimorfismo em `obterTipoPerfil()` | **Mantida** | `Pessoa` (id, nome, telefone) é abstrata; `Produtor` e `Administrador` herdam dela e sobrescrevem `obterTipoPerfil()`. |
+| Métodos das classes do diagrama | **Mantidos** | `Produtor.adicionarProduto()`/`removerProduto()`, `Produto.atualizarDados()`/`exibirInformacoes()` e `Feira.atualizarInformacoes()`/`exibirDetalhes()`, usados pelos menus. |
+| `Administrador.cadastrarProdutor()`, `cadastrarProduto()` e `cadastrarFeira()` | Operações no `CatalogoService`, acessíveis só depois do login do administrador | Na arquitetura em camadas prevista (Controller → Service → Repository), regras e gravação ficam na camada de serviço, não na classe de domínio. |
+| — | Interface `ItemCatalogo`, implementada por `Produtor` e `Feira` | Acréscimo: o catálogo público mostra feiras e produtores juntos numa `List<ItemCatalogo>`, chamando `getResumo()` em cada um (polimorfismo por interface). |
+| Tabelas `usuario` e `administrador` | **Mantidas** | O login consulta essas tabelas e compara a senha com o hash PBKDF2 gravado. No primeiro uso, o administrador inicial é criado a partir do `ADMIN_PASSWORD` do `.env`. Campos de controle do DER (`ativo`, `criado_em`) não foram incluídos, por não haver requisito de gestão de usuários. |
 | Tabelas `categoria`, `contato_produtor` e `horario_feira` | Campos `categoria` (produto), `telefone` (produtor), `dias` e `horario` (feira) | O RF03 pede a categoria, o RF01/RF10 pedem o telefone como contato e o RF05 pede dias e horários. Os campos atendem a esses requisitos com menos tabelas; dias e horários são validados antes de gravar (`FuncionamentoFeira`). |
 | Endereço detalhado e coordenadas da feira, preço de referência, unidade e disponibilidade do produto, banca e data de entrada na feira | Não implementados | Não constam nos requisitos. Pela RN06, a plataforma não realiza vendas, então preço e disponibilidade ficam para uma versão futura. |
 | Composição `Produtor` 1 → N `Produto` ("possui") | **Mantida** | `Produtor` contém a lista de `Produto`; no banco, `produto.produtor_id` com `ON DELETE CASCADE`. |
