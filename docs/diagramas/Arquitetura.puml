@@ -1,4 +1,6 @@
 @startuml
+allowmixing
+title Arquitetura em camadas — modelo implementado
 actor Consumidor
 actor Administrador
 class Main
@@ -13,11 +15,13 @@ class JdbcCatalogoRepository
 class ProdutorRepository
 class ProdutoRepository
 class FeiraRepository
+class UsuarioRepository
 database MySQL
 Main --> MenuPrincipal
 Consumidor --> MenuPrincipal : consultas
 Administrador --> MenuPrincipal : login
 MenuPrincipal --> LoginService
+LoginService --> UsuarioRepository
 MenuPrincipal --> MenuProdutores
 MenuPrincipal --> MenuProdutos
 MenuPrincipal --> MenuFeiras
@@ -33,4 +37,5 @@ JdbcCatalogoRepository --> FeiraRepository
 ProdutorRepository --> MySQL
 ProdutoRepository --> MySQL
 FeiraRepository --> MySQL
+UsuarioRepository --> MySQL
 @enduml
