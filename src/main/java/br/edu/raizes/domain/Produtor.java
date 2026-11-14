@@ -1,14 +1,13 @@
 package br.edu.raizes.domain;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public final class Produtor implements ItemCatalogo {
-    private final long id;
-    private final String nome;
+public final class Produtor extends Pessoa implements ItemCatalogo {
     private final String descricao;
-    private final String telefone;
     private final String localizacao;
-    private final List<Produto> produtos;
+    private final List<Produto> produtos = new ArrayList<>();
 
     public Produtor(
             long id,
@@ -17,30 +16,24 @@ public final class Produtor implements ItemCatalogo {
             String telefone,
             String localizacao,
             List<Produto> produtos) {
-        this.id = id;
-        this.nome = nome;
+        super(id, nome, telefone);
         this.descricao = descricao;
-        this.telefone = telefone;
         this.localizacao = localizacao;
-        this.produtos = List.copyOf(produtos);
+        for (Produto produto : produtos) adicionarProduto(produto);
     }
 
-    @Override
-    public long getId() {
-        return id;
+    public void adicionarProduto(Produto produto) {
+        if (produto.produtorId() != getId())
+            throw new IllegalArgumentException("O produto pertence a outro produtor.");
+        produtos.add(produto);
     }
 
-    @Override
-    public String getNome() {
-        return nome;
+    public void removerProduto(Produto produto) {
+        produtos.removeIf(atual -> atual.id() == produto.id());
     }
 
     public String getDescricao() {
         return descricao;
-    }
-
-    public String getTelefone() {
-        return telefone;
     }
 
     public String getLocalizacao() {
@@ -48,7 +41,12 @@ public final class Produtor implements ItemCatalogo {
     }
 
     public List<Produto> getProdutos() {
-        return produtos;
+        return Collections.unmodifiableList(produtos);
+    }
+
+    @Override
+    public String obterTipoPerfil() {
+        return "PRODUTOR";
     }
 
     @Override
