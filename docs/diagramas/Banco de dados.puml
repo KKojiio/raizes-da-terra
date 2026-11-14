@@ -1,4 +1,19 @@
 @startuml
+title DER — banco implementado (database/schema.sql)
+
+entity usuario {
+ * id : BIGINT <<PK>>
+ --
+ nome : VARCHAR(120)
+ email : VARCHAR(160) <<UK>>
+ senha_hash : VARCHAR(255)
+ tipo : ENUM('ADMINISTRADOR','PRODUTOR')
+}
+entity administrador {
+ * id_usuario : BIGINT <<PK, FK>>
+ --
+ matricula : VARCHAR(20)
+}
 entity produtor {
  * id : BIGINT <<PK>>
  --
@@ -10,7 +25,7 @@ entity produtor {
 entity produto {
  * id : BIGINT <<PK>>
  --
- * produtor_id : BIGINT <<FK NOT NULL>>
+ * produtor_id : BIGINT <<FK>>
  nome : VARCHAR(120)
  descricao : VARCHAR(1000)
  categoria : VARCHAR(80)
@@ -24,16 +39,23 @@ entity feira {
  horario : VARCHAR(120)
 }
 entity produtor_feira {
- * produtor_id : BIGINT <<PK,FK>>
- * feira_id : BIGINT <<PK,FK>>
+ * produtor_id : BIGINT <<PK, FK>>
+ * feira_id : BIGINT <<PK, FK>>
 }
-produtor ||--o{ produto
-produtor ||--o{ produtor_feira
-feira ||--o{ produtor_feira
-note bottom
+
+usuario ||--o| administrador : especializa
+produtor ||--o{ produto : possui
+produtor ||--o{ produtor_feira : participa
+feira ||--o{ produtor_feira : recebe
+
+note bottom of produtor_feira
 Chave composta impede participação duplicada.
 Todas as FKs usam ON DELETE CASCADE.
-Campos não chave também são NOT NULL.
-ItemCatalogo é abstrata: não possui tabela própria.
+Campos não chave são NOT NULL.
+end note
+note right of usuario
+A senha é gravada só como hash PBKDF2.
+O administrador inicial é criado no
+primeiro uso a partir do .env.
 end note
 @enduml
