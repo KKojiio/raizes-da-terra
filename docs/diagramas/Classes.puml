@@ -1,40 +1,59 @@
 @startuml
 skinparam classAttributeIconSize 0
-abstract class ItemCatalogo {
-  - id : long
-  - nome : String
-  + getId() : long
-  + getNome() : String
-  {abstract} + getResumo() : String
+abstract class Pessoa {
+ - id : long
+ - nome : String
+ - telefone : String
+ + getId() : long
+ + getNome() : String
+ + getTelefone() : String
+ {abstract} + obterTipoPerfil() : String
+}
+interface ItemCatalogo {
+ + getId() : long
+ + getNome() : String
+ + getResumo() : String
+}
+class Administrador {
+ - email : String
+ - matricula : String
+ + getEmail() : String
+ + getMatricula() : String
+ + obterTipoPerfil() : String
 }
 class Produtor {
-  - descricao : String
-  - telefone : String
-  - localizacao : String
-  - produtos : List<Produto>
-  + getProdutos() : List<Produto>
-  + getResumo() : String
+ - descricao : String
+ - localizacao : String
+ - produtos : List<Produto>
+ + adicionarProduto(produto : Produto) : void
+ + removerProduto(produto : Produto) : void
+ + getProdutos() : List<Produto>
+ + obterTipoPerfil() : String
+ + getResumo() : String
 }
 class Feira {
-  - endereco : String
-  - dias : String
-  - horario : String
-  + getResumo() : String
+ - id : long
+ - nome : String
+ - endereco : String
+ - diasFuncionamento : String
+ - horarioFuncionamento : String
+ + atualizarInformacoes(nome, endereco, dias, horario) : void
+ + exibirDetalhes() : String
+ + getResumo() : String
 }
-class Produto <<record>> {
-  + id : long
-  + produtorId : long
-  + nome : String
-  + descricao : String
-  + categoria : String
+class Produto {
+ - id : long
+ - produtorId : long
+ - nome : String
+ - descricao : String
+ - categoria : String
+ + atualizarDados(nome, descricao, categoria) : void
+ + exibirInformacoes() : String
 }
-ItemCatalogo <|-- Produtor
-ItemCatalogo <|-- Feira
-Produtor "1" *-- "0..*" Produto : possui catálogo
+Pessoa <|-- Administrador
+Pessoa <|-- Produtor
+ItemCatalogo <|.. Produtor
+ItemCatalogo <|.. Feira
+Produtor "1" *-- "0..*" Produto : possui
 Produtor "0..*" -- "0..*" Feira : participa
-note bottom of Produto
-Um produto tem exatamente um dono.
-Ao excluir o dono, o produto é removido.
-Zero produtos permite cadastro em etapas.
-end note
 @enduml

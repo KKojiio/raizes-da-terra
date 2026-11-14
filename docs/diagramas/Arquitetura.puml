@@ -33,4 +33,6 @@ JdbcCatalogoRepository --> FeiraRepository
 ProdutorRepository --> MySQL
 ProdutoRepository --> MySQL
 FeiraRepository --> MySQL
+LoginService --> UsuarioRepository
+UsuarioRepository --> MySQL
 @enduml

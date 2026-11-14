@@ -30,10 +30,25 @@ entity produtor_feira {
 produtor ||--o{ produto
 produtor ||--o{ produtor_feira
 feira ||--o{ produtor_feira
+entity usuario {
+ * id : BIGINT <<PK>>
+ --
+ nome : VARCHAR(120)
+ email : VARCHAR(160) <<UNIQUE>>
+ senha_hash : VARCHAR(255)
+ tipo : ENUM(ADMINISTRADOR, PRODUTOR)
+}
+entity administrador {
+ * id_usuario : BIGINT <<PK,FK>>
+ --
+ matricula : VARCHAR(20)
+}
+usuario ||--o| administrador
 note bottom
 Chave composta impede participação duplicada.
 Todas as FKs usam ON DELETE CASCADE.
 Campos não chave também são NOT NULL.
-ItemCatalogo é abstrata: não possui tabela própria.
+Pessoa é abstrata e ItemCatalogo é interface: não possuem tabelas próprias.
+Produtor é gravado em produtor; o administrador usa usuario + administrador.
 end note
 @enduml
