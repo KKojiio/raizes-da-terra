@@ -1,15 +1,45 @@
 package br.edu.raizes.domain;
 
-public final class Feira extends ItemCatalogo {
-    private final String endereco;
-    private final String dias;
-    private final String horario;
+/** Feira livre (RF05, RN05): sempre tem endereço, dias e horário de funcionamento. */
+public final class Feira implements ItemCatalogo {
+    private final long id;
+    private String nome;
+    private String endereco;
+    private String diasFuncionamento;
+    private String horarioFuncionamento;
 
     public Feira(long id, String nome, String endereco, String dias, String horario) {
-        super(id, nome);
+        this.id = id;
+        atualizarInformacoes(nome, endereco, dias, horario);
+    }
+
+    /** Atualiza os dados da feira; a gravação no banco é feita pelo CatalogoService. */
+    public void atualizarInformacoes(String nome, String endereco, String dias, String horario) {
+        this.nome = nome;
         this.endereco = endereco;
-        this.dias = dias;
-        this.horario = horario;
+        this.diasFuncionamento = dias;
+        this.horarioFuncionamento = horario;
+    }
+
+    /** Detalhamento da feira (RF06, RF09): nome, endereço e funcionamento. */
+    public String exibirDetalhes() {
+        return nome
+                + "\nEndereço: "
+                + endereco
+                + "\nFuncionamento: "
+                + diasFuncionamento
+                + ", "
+                + horarioFuncionamento;
+    }
+
+    @Override
+    public long getId() {
+        return id;
+    }
+
+    @Override
+    public String getNome() {
+        return nome;
     }
 
     public String getEndereco() {
@@ -17,15 +47,15 @@ public final class Feira extends ItemCatalogo {
     }
 
     public String getDias() {
-        return dias;
+        return diasFuncionamento;
     }
 
     public String getHorario() {
-        return horario;
+        return horarioFuncionamento;
     }
 
     @Override
     public String getResumo() {
-        return dias + ", " + horario + " - " + endereco;
+        return diasFuncionamento + ", " + horarioFuncionamento + " - " + endereco;
     }
 }

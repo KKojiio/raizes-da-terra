@@ -58,12 +58,17 @@ public final class MenuFeiras {
     private void editarFeira() {
 
         var feira = catalogo.feira(entrada.numero("ID da feira"));
-        catalogo.salvarFeira(
-                feira.getId(),
+        feira.atualizarInformacoes(
                 entrada.campo("Nome", feira.getNome()),
                 entrada.campo("Endereço", feira.getEndereco()),
                 entrada.campo("Dias", feira.getDias()),
                 entrada.campo("Horário", feira.getHorario()));
+        catalogo.salvarFeira(
+                feira.getId(),
+                feira.getNome(),
+                feira.getEndereco(),
+                feira.getDias(),
+                feira.getHorario());
         entrada.mostrar("Feira atualizada.");
     }
 

@@ -49,7 +49,7 @@ Para usar um MySQL já instalado, defina `DB_URL` (ex.: `jdbc:mysql://127.0.0.1:
 powershell -ExecutionPolicy Bypass -File .\testar.ps1
 ```
 
-São 39 casos de teste: 18 de integração contra o **MySQL real**, com transações desfeitas ao final, e 21 de validação de dias e horários. Não há banco em memória.
+São 42 casos de teste: 18 de integração contra o **MySQL real**, com transações desfeitas ao final, 21 de validação de dias e horários e 3 da classe `Feira`. Não há banco em memória.
 
 ## Usando o sistema
 
@@ -97,10 +97,10 @@ Ordem sugerida: cadastre um produtor → um produto dele → uma feira → assoc
 
 | Pilar | Onde |
 |---|---|
-| Classe abstrata | `ItemCatalogo` (método abstrato `getResumo()`) |
-| Interface | `CatalogoRepository`, implementada por `JdbcCatalogoRepository` |
-| Herança | `Produtor` e `Feira` estendem `ItemCatalogo` |
-| Polimorfismo (`@Override`) | `Produtor` e `Feira` sobrescrevem `getResumo()`; o catálogo percorre uma `List<ItemCatalogo>` e chama `getResumo()` em cada item |
+| Classe abstrata | `JdbcBase`, base dos repositórios (inserção e verificação de registros) |
+| Interface | `ItemCatalogo`, implementada por `Produtor` e `Feira`; `CatalogoRepository`, implementada por `JdbcCatalogoRepository` |
+| Herança | `ProdutorRepository`, `ProdutoRepository` e `FeiraRepository` estendem `JdbcBase` |
+| Polimorfismo (`@Override`) | `Produtor` e `Feira` implementam `getResumo()` cada um do seu jeito; o catálogo percorre uma `List<ItemCatalogo>` e chama `getResumo()` em cada item |
 | Composição 1:N | Um `Produtor` possui uma lista de `Produto`; no banco, `produto.produtor_id` com `ON DELETE CASCADE` |
 | Encapsulamento | Atributos `private final`, lista de produtos imutável |
 
@@ -110,7 +110,7 @@ O escopo planejado na 1ª entrega foi mantido por inteiro: **os requisitos RF01�
 
 | Planejado (1ª entrega) | Implementado (2ª entrega) | Motivo |
 |---|---|---|
-| Classe abstrata `Pessoa`, especializada em `Administrador` e `Produtor`, com polimorfismo em `obterTipoPerfil()` | Classe abstrata `ItemCatalogo`, especializada em `Produtor` e `Feira`, com polimorfismo em `getResumo()` | Nenhum requisito pede cadastro de usuários: o administrador é um operador único, não uma entidade do catálogo. Já produtores e feiras são justamente o que o consumidor consulta, e o catálogo os trata juntos numa `List<ItemCatalogo>`, chamando `getResumo()` em cada um. Assim o polimorfismo é usado de fato na consulta, e não só declarado. O próprio documento da 1ª entrega apresentou `Pessoa` como "uma possibilidade". |
+| Classe abstrata `Pessoa`, especializada em `Administrador` e `Produtor`, com polimorfismo em `obterTipoPerfil()` | Interface `ItemCatalogo`, implementada por `Produtor` e `Feira`, com polimorfismo em `getResumo()` (a classe `Pessoa` do diagrama está sendo incorporada) | Nenhum requisito pede cadastro de usuários: o administrador é um operador único, não uma entidade do catálogo. Já produtores e feiras são justamente o que o consumidor consulta, e o catálogo os trata juntos numa `List<ItemCatalogo>`, chamando `getResumo()` em cada um. Assim o polimorfismo é usado de fato na consulta, e não só declarado. O próprio documento da 1ª entrega apresentou `Pessoa` como "uma possibilidade". |
 | Tabelas `usuario` e `administrador` | Login do administrador por configuração (`ADMIN_PASSWORD` no `.env`) | Mesmo motivo: não há requisito de gestão de usuários. O sistema evita guardar senhas no banco sem necessidade. |
 | Tabelas `categoria`, `contato_produtor` e `horario_feira` | Campos `categoria` (produto), `telefone` (produtor), `dias` e `horario` (feira) | O RF03 pede a categoria, o RF01/RF10 pedem o telefone como contato e o RF05 pede dias e horários. Os campos atendem a esses requisitos com menos tabelas; dias e horários são validados antes de gravar (`FuncionamentoFeira`). |
 | Endereço detalhado e coordenadas da feira, preço de referência, unidade e disponibilidade do produto, banca e data de entrada na feira | Não implementados | Não constam nos requisitos. Pela RN06, a plataforma não realiza vendas, então preço e disponibilidade ficam para uma versão futura. |

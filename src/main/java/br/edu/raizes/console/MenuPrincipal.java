@@ -115,7 +115,7 @@ public final class MenuPrincipal {
 
         long id = entrada.numero("ID da feira");
         var feira = catalogo.feira(id);
-        entrada.mostrar(feira.getNome() + " | " + feira.getResumo());
+        entrada.mostrar(feira.exibirDetalhes());
         for (var produtor : catalogo.produtoresDaFeira(id))
             entrada.mostrar(
                     "Produtor: " + produtor.getNome() + " | contato: " + produtor.getTelefone());
