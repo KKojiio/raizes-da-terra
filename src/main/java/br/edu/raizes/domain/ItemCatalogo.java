@@ -1,21 +1,14 @@
 package br.edu.raizes.domain;
 
-public abstract class ItemCatalogo {
-    private final long id;
-    private final String nome;
+/**
+ * Interface do catálogo público: tudo o que o consumidor consulta (feiras e produtores). Cada
+ * implementação define o próprio resumo, e o catálogo os trata juntos numa List<ItemCatalogo>
+ * (polimorfismo via @Override).
+ */
+public interface ItemCatalogo {
+    long getId();
 
-    protected ItemCatalogo(long id, String nome) {
-        this.id = id;
-        this.nome = nome;
-    }
+    String getNome();
 
-    public long getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public abstract String getResumo();
+    String getResumo();
 }

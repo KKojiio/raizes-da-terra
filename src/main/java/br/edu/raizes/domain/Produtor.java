@@ -2,7 +2,9 @@ package br.edu.raizes.domain;
 
 import java.util.List;
 
-public final class Produtor extends ItemCatalogo {
+public final class Produtor implements ItemCatalogo {
+    private final long id;
+    private final String nome;
     private final String descricao;
     private final String telefone;
     private final String localizacao;
@@ -15,11 +17,22 @@ public final class Produtor extends ItemCatalogo {
             String telefone,
             String localizacao,
             List<Produto> produtos) {
-        super(id, nome);
+        this.id = id;
+        this.nome = nome;
         this.descricao = descricao;
         this.telefone = telefone;
         this.localizacao = localizacao;
         this.produtos = List.copyOf(produtos);
+    }
+
+    @Override
+    public long getId() {
+        return id;
+    }
+
+    @Override
+    public String getNome() {
+        return nome;
     }
 
     public String getDescricao() {
